@@ -1,10 +1,14 @@
-export interface BalanceResponse {
+import { Network } from "@tatumio/tatum";
+
+export interface GenerateWalletResponse {
     balance: string;
     asset: string
 }
 
 export enum SubscriptionTypes{
-    INCOMING_NATIVE_TX, INCOMING_INTERNAL_TX, ADDRESS_EVENT
+    INCOMING_NATIVE_TX, 
+    INCOMING_INTERNAL_TX, 
+    ADDRESS_EVENT
 }
 
 export interface IncomigAssetNotification {
@@ -17,4 +21,10 @@ export interface IncomigAssetNotification {
     blockNumber: number,
     txId: string,
     mempool: boolean
+}
+
+export enum SupportedCurrencies{
+    BTC = "BTC",
+    BSC = "BSC",
+    TRON = "TRON"
 }

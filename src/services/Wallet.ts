@@ -1,29 +1,55 @@
-import { TatumSDK, Network } from '@tatumio/tatum'
+import { TatumSDK } from '@tatumio/tatum'
+import BSC from '../blockchain/Bsc';
+import BTC from '../blockchain/Btc';
+import TRON from '../blockchain/Tron';
+import { BlockchainBase } from '../types/currencies';
+import { SupportedCurrencies } from '../types/wallet';
+
 
 export default class WalletService {
-    public network: Network;
-    public address: string;
+    public currency: SupportedCurrencies;
+    public client: BlockchainBase;
 
-    constructor(network: Network, address: string){
-        this.network = network;
-        this.address = address;
+    constructor(currency: SupportedCurrencies){
+        this.currency = currency;
+
+        switch(currency){
+            case SupportedCurrencies.BTC:
+                this.client = new BTC()
+                break;
+
+            case SupportedCurrencies.BSC:
+                this.client = new BSC()
+                break;
+            
+            case SupportedCurrencies.TRON:
+                this.client = new TRON();
+                break;
+        }
     }
 
-    getBalance = async ()=> {
-        const tatum =  await TatumSDK.init({ network: this.network });
-
-        const balance = await tatum.address.getBalance({
-            addresses: [this.address],
-        });
-        return balance.data[0];
+    generateWallet = async () => {
+        return await this.client.generateWallet();
     }
 
-    getTransactions = async ()=> {
-        const tatum =  await TatumSDK.init({ network: this.network });
+    getBalance = async (address: string) => (
+        await this.client.getBalance(address)
+    )
 
-        const transactions = await tatum.getTransactions.getBalance({
-            addresses: [this.address],
-        });
-        return transactions.data;
-    }
+    generateVirtualAccount = async (xpub: string) => (
+        await this.client.generateVirtualAccount(xpub)
+    )
+
+    generateDepositAddressForVirtualAccount = async (accountId: string) => (
+        await this.client.generateDepositAddressForVirtualAccount(accountId)
+    )
+
+    getAllDepositAddressForVirtualAccount = async (accountId: string) => (
+        await this.client.getAllDepositAddressForVirtualAccount(accountId)
+    )
+
+    getVirtualAccountInfo = async (accountId: string) => (
+        await this.client.getVirtualAccountInfo(accountId)
+    )
+
 }
